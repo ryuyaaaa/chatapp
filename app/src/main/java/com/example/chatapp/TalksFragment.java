@@ -28,7 +28,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class TalksFragment extends Fragment {
 
-    private final String ROOM_URL = "http://2091827d.ngrok.io/api/rooms";
+    private final String ROOM_URL = "http://07f8129f.ngrok.io/api/rooms";
     private String uid;
 
     public static ArrayList<String> talkRoomList = null;

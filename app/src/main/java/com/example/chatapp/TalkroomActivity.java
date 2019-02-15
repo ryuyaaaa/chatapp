@@ -30,7 +30,7 @@ public class TalkroomActivity extends AppCompatActivity {
 
     private String Uid;
     private String toUid;
-    private final String MESSAGE_URL = "http://2091827d.ngrok.io/api/messages";
+    private final String MESSAGE_URL = "http://07f8129f.ngrok.io/api/messages";
 
     public static ArrayList<String> messageList;
 
@@ -213,30 +213,6 @@ public class TalkroomActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
 
-            /*
-            try {
-                messageList = new ArrayList<>();
-                JSONObject json = new JSONObject(result);
-                JSONArray messages = json.getJSONArray("results");
-
-                for (int i = 0; i < messages.length(); i++) {
-                    JSONObject messageObj = messages.getJSONObject(i);
-                    String from = messageObj.getString("from_uid");
-                    String message = messageObj.getString("content");
-                    System.out.println("[" + from + "]: " + message);
-                    messageList.add("[" + from + "]: " + message);
-                }
-
-            } catch (JSONException je) {
-                je.printStackTrace();
-                showLoadError();
-            }
-
-
-            ListView listView = view.findViewById(R.id.message_list);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, messageList);
-            listView.setAdapter(adapter);
-            */
         }
 
         // エラーメッセージ表示
