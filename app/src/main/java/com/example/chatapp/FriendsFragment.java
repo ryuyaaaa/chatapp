@@ -23,4 +23,5 @@ public class FriendsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
     }
+
 }
