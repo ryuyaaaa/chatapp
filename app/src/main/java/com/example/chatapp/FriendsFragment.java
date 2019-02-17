@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,7 +41,7 @@ public class FriendsFragment extends Fragment {
     private final String FRIEND_URL = "http://38133334.ngrok.io/api/friends";
     private String Uid;
 
-    Handler handler;
+    public static ArrayList<String> friendList = null;
 
     // Fragmentで表示するViewを作成するメソッド
     @Override
@@ -59,6 +60,14 @@ public class FriendsFragment extends Fragment {
         SharedPreferences pref = getActivity().getSharedPreferences("UserInfo", MODE_PRIVATE);
         Uid = pref.getString("Uid", "0");
 
+        try {
+            // 友達一覧を読み込むため
+            AsyncJsonLoader asyncJsonLoader = new AsyncJsonLoader(Uid, FRIEND_URL, getActivity().getApplication(), getView());
+            asyncJsonLoader.execute();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
         final EditText editId = view.findViewById(R.id.edit_id);
         Button addButton = view.findViewById(R.id.button_add);
 
@@ -75,6 +84,93 @@ public class FriendsFragment extends Fragment {
             }
         });
 
+    }
+
+    // 非同期でGETアクションを行うクラス
+    public static class AsyncJsonLoader extends AsyncTask<Void, Void, String> {
+
+        private String uri;
+        private Application context;
+        private View view;
+        private String uid;
+
+        private AsyncJsonLoader(String uid, String uri, Application context, View view) {
+            this.uri = uri;
+            this.context = context;
+            this.view = view;
+            this.uid = uid;
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+            String result = null;
+
+            // リクエストオブジェクトを作って
+            Request request = new Request.Builder()
+                    .url(uri)
+                    .addHeader("Content-Type", "application/json; charset=utf-8")
+                    .addHeader("Uid", uid)
+                    .build();
+
+            // クライアントオブジェクトを作って
+            OkHttpClient client = new OkHttpClient();
+
+            // リクエストして結果を受け取って
+            try {
+                Response response = client.newCall(request).execute();
+                assert response.body() != null;
+                result = response.body().string();
+                System.out.println(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // 返す
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            try {
+                friendList = new ArrayList<>();
+                JSONObject json = new JSONObject(result);
+                JSONArray talks = json.getJSONArray("results");
+
+                for (int i = 0; i < talks.length(); i++) {
+                    JSONObject toObj = talks.getJSONObject(i);
+                    String toId = toObj.getString("to_uid");
+                    System.out.println(toId);
+                    friendList.add(toId);
+                }
+
+            } catch (JSONException je) {
+                je.printStackTrace();
+                showLoadError();
+            }
+
+
+            final ListView listView = view.findViewById(R.id.friend_list);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(), android.R.layout.simple_list_item_1, friendList);
+            listView.setAdapter(adapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String item = adapter.getItem(position);
+
+                    //Intent intent = new Intent(context, TalkroomActivity.class);
+                    //intent.putExtra("to_uid", item);
+                    //context.startActivity(intent);
+                }
+            });
+        }
+
+        // エラーメッセージ表示
+        private void showLoadError() {
+            Toast toast = Toast.makeText(context, "データを取得できませんでした。", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     // 非同期でPOSTアクションを行うクラス

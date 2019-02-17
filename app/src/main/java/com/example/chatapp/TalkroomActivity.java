@@ -30,7 +30,7 @@ public class TalkroomActivity extends AppCompatActivity {
 
     private String Uid;
     private String toUid;
-    private final String MESSAGE_URL = "http://07f8129f.ngrok.io/api/messages";
+    private final String MESSAGE_URL = "http://38133334.ngrok.io/api/messages";
 
     public static ArrayList<String> messageList;
 

@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
     EditText edit_name;
     EditText edit_comment;
 
-    private final String USER_URL = "http://07f8129f.ngrok.io/api/users";
+    private final String USER_URL = "http://38133334.ngrok.io/api/users";
 
     // Fragmentで表示するViewを作成するメソッド
     @Override
